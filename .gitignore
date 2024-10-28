@@ -1,0 +1,11 @@
+*.ipynb
+!tutorial.ipynb
+*.db
+*.so
+*.o
+.ipynb_checkpoints
+.idea
+.DS_Store
+*.npy
+*.pyc
+.DS_Store

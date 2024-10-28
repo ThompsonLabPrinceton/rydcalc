@@ -1,0 +1,6 @@
+build
+.ipynb_checkpoints
+__pycache__
+*.so
+.DS_Store
+.idea
