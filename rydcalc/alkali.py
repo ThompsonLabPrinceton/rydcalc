@@ -353,7 +353,7 @@ class AlkaliAtom(Hydrogen):
     def numerov_py(self,st,ch):
         """
             This code is borrowed from the Alkali Rydberg Calculator, with minor modifications
-            to handle the object structure of rydcalc.
+            to handle the object structure of rydcalc. Please see the LICENSE file for copyright and license attribution.
             
             Full Python implementation of Numerov integration
             Calculates solution function :math:`rad(r)` with descrete step in

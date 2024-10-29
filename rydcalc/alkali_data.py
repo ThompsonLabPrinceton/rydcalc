@@ -37,6 +37,8 @@ class Rubidium87(AlkaliAtom):
     Z = 37
 
     ground_state_n = 5
+
+    citations = ['Mack2011Measurement','Li2003Millimeter','Han2006Rb','Berl2020Core','Marinescu1994Dispersion']
     
     defects = []
     #defects.append(defect_Rydberg_Ritz([3.1311804, 0.1784], condition = lambda qns: qns['j']==1/2 and qns['l']==0)) , #85Rb from PHYSICAL REVIEW A 83, 052515 (2011)
@@ -84,6 +86,8 @@ class Potassium39(AlkaliAtom):
     Z = 19
 
     ground_state_n = 4
+
+    citations = ['Peper2019Precision','Risberg1956A','Johansson1972An','Lorenzen1981Precise','Lorenzen1983Quantum','Marinescu1994Dispersion']
 
     defects = []
     defects.append(defect_Rydberg_Ritz([2.18020826, 0.134534, 0.0952, 0.0021], condition=lambda qns: qns['j'] == 1 / 2 and qns['l'] == 0)) # PHYSICAL REVIEW A 100, 012501 (2019)

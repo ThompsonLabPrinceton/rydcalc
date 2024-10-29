@@ -1,4 +1,6 @@
-
+/*
+This code is incorporated from the Alkali Rydberg Calculator project. Please see the copyright and license attribution in the LICENSE file.
+*/
 #include <Python.h>
 // http://docs.scipy.org/doc/numpy/reference/c-api.deprecations.html
 #define NPY_NO_DEPRECATED_API NPY_1_9_API_VERSION

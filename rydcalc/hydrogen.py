@@ -61,6 +61,8 @@ class Hydrogen:
     channels = []
     
     init_dipole_db = False
+
+    citations = []
     
     def __init__(self):
         """

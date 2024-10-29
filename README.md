@@ -1,34 +1,20 @@
-Unnamed Rydberg Calculator
+Rydberg calculator
 
-Jeff Thompson, 2/20-
+Thompson Lab
+Contributors: Jeff Thompson, Michael Peper, Sam Cohen
 
-This borrows concepts from ARC, and in particular incorporates the Numerov
-wavefunction routines and associated parameterization of core potentials, etc.,
-exactly.
+This package computes quantities related to Rydberg states in an MDQT framework, including state energies, Stark shifts and pair interaction potentials. This software was used to implement the calculations in [M. Peper et al arXiv:2406.01482](http://arxiv.org/abs/2406.01482) for <sup>174</sup>Yb and <sup>171</sup>Yb. An earlier version was used to implement the calculations in [Cohen and Thompson, PRX 2 030322 (2022)](https://link.aps.org/doi/10.1103/PRXQuantum.2.030322).
 
-The key difference, and motivation for starting over with a new codebase, is
-to develop a framework that treats states as generic objects without regard
-to the term symbols used to specify them (ie, Hydrogen nlm, fine structure,
-hyperfine, etc.). The goal is to have a considerably more streamlined handling
-of Alkaline earth atoms (with virtually zero code changes from Alkali), as well
-as to be able to handle inter-species interactions and eventually more complex
-phenomenon like singlet-triplet mixing and hyperfine structure in alkaline earths.
+The basic approach to computing pair potentials follows [pairinteraction](https://github.com/pairinteraction/pairinteraction) and the [Alkali Rydberg Calculator (ARC)](https://github.com/nikolasibalic/ARC-Alkali-Rydberg-Calculator). In particular, we have directly incorporated functions for computing wavefunctions numerically using the Numerov method from ARC.
 
+`rydcalc` also has the necessary atomic data to perform calculations for Alkali atoms, which is intended mainly for debugging and comparison to results obtained with other programs that have been more extensively tested and documented. If you can do your calculation with other programs, we recommend that! But if you need MQDT, please try `rydcalc`.
 
-A few notes:
+Documentation illustrating the basic functionality of the code can be found in the tutorial.ipynb notebook, and in the comments throughout the code.
 
-1. To compile ARC C numerov integrator, run this from terminal (os x):
+Note: to compile the ARC C numerov integrator, run this from a console (in MacOS/Linux):
 'python setupc.py build_ext --inplace'
 
 [Note: if you are using Anaconda with multiple environments, you must run this
 with the correct environment activated on the command line!]
 
-[Note: see ARC documentation for other platforms]
-
-2. When initializing an atom (ie, Yb = rydcalc.Ytterbium174()), there are two
-important options:
-- cpp_numerov = True/False whether to use cpp numerov (much faster than python implementation)
-- use_db = True/False whether to cache radial matrix elements (this will make calculations 
-much faster over time, but it is _not_ a good idea if you are redefining/tinkering with
-quantum defects)
-
+See [ARC documentation](https://arc-alkali-rydberg-calculator.readthedocs.io/en/latest/installation.html#compiling-c-extension) for other platforms.

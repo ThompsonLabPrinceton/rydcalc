@@ -25,7 +25,10 @@ class Ytterbium174(AlkalineAtom):
     RydConstHz = cs.physical_constants["Rydberg constant times c in Hz"][0] * \
                  (1 - cs.physical_constants["electron mass"][0] / (mass * cs.physical_constants["atomic mass constant"][0]))
 
+
     def __init__(self, params=None, **kwargs):
+
+        self.citations = ['Peper2024Spectroscopy', 'Aymar1984three', 'Meggers1970First', 'Camus1980Highly', 'Camus1969spectre', 'Meggers1970First', 'Wyart1979Extended', 'Aymar1980Highly', 'Camus1980Highly', 'Aymar1984three', 'Martin1978Atomic', 'BiRu1991The', 'Maeda1992Optical', 'zerne1996lande', 'Ali1999Two', 'Lehec2017PhD', 'Lehec2018Laser']
 
         my_params = {
                      }

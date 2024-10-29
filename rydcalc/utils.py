@@ -1,10 +1,12 @@
-
+from dill import citation
 from sympy.physics.wigner import wigner_3j as wigner_3j_sympy
 from sympy.physics.wigner import wigner_6j as wigner_6j_sympy
 from sympy.physics.wigner import wigner_9j as wigner_9j_sympy
 from sympy.physics.quantum.cg import CG as CG_sympy
 
 import numpy as np
+
+import re, importlib.resources
 
 import functools, copy
 
@@ -104,6 +106,44 @@ class model_params:
             return np.array([self.sigmas[k] for k in keys])
 
 
+def retrieve_bibtex_citations(atom):
+    """
+    Retrieve specific BibTeX formatted citations from a .bib file based on a list of citations.
+
+    Args:
+        atom (Atom): An object that contains a list of citation identifiers to retrieve.
+
+    Returns:
+        list: A list of BibTeX formatted strings.
+
+    The function reads a .bib file, extracts all BibTeX entries, and filters them based on the provided citation identifiers.
+    """
+
+    datadir = importlib.resources.files('rydcalc')
+    with open(datadir.joinpath('bib.bib'), 'r') as file:
+        content = file.read()
+
+    citations = atom.citations
+
+    if not citations:
+        print("Warning: The list of citations is empty. Citations will be implemented soon.")
+        return []
+
+    # Regular expression to match BibTeX entries
+    bibtex_entries = re.findall(r'@\w+\{[^@]*\}', content)
+
+    # Filter entries based on identifiers
+    filtered_entries = [entry for entry in bibtex_entries if any(identifier in entry for identifier in citations)]
+
+    # Check for missing citations
+    found_identifiers = [identifier for entry in filtered_entries for identifier in citations if identifier in entry]
+    missing_identifiers = set(citations) - set(found_identifiers)
+
+    for identifier in missing_identifiers:
+        print(f"Warning: Citation '{identifier}' not found in the .bib file.")
+
+    for i in filtered_entries:
+        print(i+'\n')
 
         
         

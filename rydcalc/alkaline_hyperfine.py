@@ -34,6 +34,8 @@ class Ytterbium171(AlkalineAtom):
 
     
     def __init__(self,params=None,**kwargs):
+
+        self.citations = ['Peper2024Spectroscopy', 'Majewski1985diploma']
         
         my_params = {
 
