@@ -57,7 +57,7 @@ class analysis_stark(analysis):
     def pure_quad_fit(self,e,quad):
         return e**2 * quad
         
-    def run(self,Bz_Gauss=0,Ez_list_Vcm = np.arange(0,1,0.1),plot=False,diamagnetism = False):
+    def run(self,Bz_Gauss=0,Ez_list_Vcm = np.arange(0,1,0.1),plot=False,silence = False,diamagnetism = False):
         """
         Run the Stark shift analysis for a range of electric fields.
 
@@ -79,15 +79,18 @@ class analysis_stark(analysis):
         
         self.en0All = self.sb.compute_energies(self.env)
         self.en0 = self.en0All[0,0]
+
+        self.evAll = []        
         
-        
-        for ez in self.Ez_list_Vcm:
+        for ez in tqdm(self.Ez_list_Vcm,disable=silence):
             
             self.env.Ez_Vcm = ez
             
             ret = self.sb.compute_energies(self.env)
     
             self.energiesAll.append(self.sb.es - self.en0)
+
+            self.evAll.append(self.sb.ev)
     
             self.energies.append(ret[:,0] - self.en0)
             self.overlaps.append(ret[:,1])
@@ -95,6 +98,7 @@ class analysis_stark(analysis):
         self.energies = np.real(np.array(self.energies))
         self.overlaps = np.real(np.array(self.overlaps))
         self.energiesAll = np.real(np.array(self.energiesAll))
+        self.evAll = np.array(self.evAll)
         
         self.starkFits = []
         
@@ -136,31 +140,104 @@ class analysis_stark(analysis):
         
         return self.starkFits
     
-    def plot_stark_map(self,energy_range_Hz = [-1e9,1e9]):
+    def plot_stark_map(self,include_plot_opts ={}):
         """
         Plots the Stark map for the system within a specified energy range.
 
         Args:
-            energy_range_Hz (list): A two-element list specifying the minimum and maximum energy range in Hz for the plot.
-
+            include_plot_opts (dict, optional): Dictionary of plotting options to customize the appearance.
+                Common options include:
+                    - 'energy_range_Hz': List [min, max] for y-axis energy range in Hz.
+                    - 'highlight_idx': Index of the state to highlight in the plot.
+                    - 'ov_norm': Overlap normalization ('linear', 'log', or 'power').
+                    - 'special_colors': Custom color schemes for highlighting.
+                    - 'show_fit': If True, overlays quadratic Stark fits for highlighted states.
+                    - 'cb_loc': Location of the colorbar.
         Returns:
 
             fig,ax for further modification.
         """
 
-        fig,ax = plt.subplots(1,1,figsize=(4,4))
+        # fig,ax = plt.subplots(1,1,figsize=(4,4))
         
-        for ii in range(len(self.Ez_list_Vcm)):
-            ax.plot(self.Ez_list_Vcm[ii]*np.ones_like(self.energiesAll[ii]),self.energiesAll[ii]*1e-6,'.',color='gray')
+        # for ii in range(len(self.Ez_list_Vcm)):
+        #     ax.plot(self.Ez_list_Vcm[ii]*np.ones_like(self.energiesAll[ii]),self.energiesAll[ii]*1e-6,'.',color='gray')
             
-        for ii in range(len(self.sb.highlight)):
-            ax.plot(self.Ez_list_Vcm,self.energies[:,ii]*1e-6,'v',color='C'+str(ii),label=repr(self.sb.highlight[ii][:1]))
-            ax.plot(self.Ez_list_Vcm,self.quad_fit(self.Ez_list_Vcm,*self.starkFits[ii])*1e-6,'-',color='C'+str(ii))
+        # for ii in range(len(self.sb.highlight)):
+        #     ax.plot(self.Ez_list_Vcm,self.energies[:,ii]*1e-6,'v',color='C'+str(ii),label=repr(self.sb.highlight[ii][:1]))
+        #     ax.plot(self.Ez_list_Vcm,self.quad_fit(self.Ez_list_Vcm,*self.starkFits[ii])*1e-6,'-',color='C'+str(ii))
+
+        # ax.set_xlabel('Electric Field (V/cm)')
+        # ax.set_ylabel(r'Energy ($h\cdot$MHz)')
+        # ax.legend()
+        # ax.set_ylim(1e-6*np.array(energy_range_Hz))
+        # ax.grid(axis='both')
+
+        self.plot_opts = {"ov_norm": 'linear',"s":5,"lin_norm":[0,1],"log_norm":[0.1,1],"gamma":0.5,'cb_loc':'right','special_colors':None,'highlight_idx':0,'energy_range_Hz' :[-1e9,1e9],'show_fit':True}
+        self.overlapsAll = []
+
+        for k, v in include_plot_opts.items():
+            self.plot_opts[k] = v
+
+        if self.plot_opts["special_colors"] == None:
+            # red, blue, orange, teal, magenta, cyan
+            colorschemes = [['#DDDDDD', '#CC3311'], ['#DDDDDD', '#0077BB'], ['#DDDDDD', '#EE7733'], ['#DDDDDD', '#009988'], ['#DDDDDD', '#EE3377'], ['#DDDDDD', '#33BBEE']]
+        else:
+            colorschemes = self.plot_opts["special_colors"]
+
+        # now we want to plot energies of  states and highlight using overlap
+
+
+        minE = 0
+        maxE = 0
+    
+        fig, ax = plt.subplots(1,1,figsize=(4,4))
+
+        cmap0 = matplotlib.colors.LinearSegmentedColormap.from_list('testCmap', colorschemes[self.plot_opts["highlight_idx"] % len(colorschemes)], N=256)
+
+        # determine range of initial target state
+        newMinE = min(self.energies[:,self.plot_opts["highlight_idx"]]*1e-6)
+        newMaxE = max(self.energies[:,self.plot_opts["highlight_idx"]]*1e-6)
+
+        minE = min(newMinE,minE)
+        maxE = max(newMaxE,maxE)
+
+        ov = []
+        Flist = []
+        Elist = []
+
+        for jj in range(len(self.Ez_list_Vcm)):
+            # self.evAll[jj] is list of eigenvalues for this r
+            # take overlap with pb.highlight[3] which is ket for this highlight state
+            ov = np.append(ov, ([np.abs(np.sum(self.sb.highlight[self.plot_opts["highlight_idx"]][3] * self.evAll[jj, :, kk])) ** 2 for kk in range(self.sb.dim())]))
+            Flist = np.append(Flist, (list(self.Ez_list_Vcm[jj] * np.ones_like(self.energiesAll[jj]))))
+            Elist = np.append(Elist, list((self.energiesAll[jj] * 1e-6)))
+
+        # get order of points by overlap to plot points with high overlap on top of points with low overlap
+        order = np.argsort(ov)
+
+        self.overlapsAll.append([ov])
+
+        # normalization overlap:
+        if self.plot_opts["ov_norm"] == 'log':
+            norm = matplotlib.colors.LogNorm(vmin=self.plot_opts["log_norm"][0], vmax=self.plot_opts["log_norm"][1],clip=True)
+        elif self.plot_opts["ov_norm"] == 'linear':
+            norm = matplotlib.colors.Normalize(vmin=self.plot_opts["lin_norm"][0], vmax=self.plot_opts["lin_norm"][1])
+        elif self.plot_opts["ov_norm"] == 'power':
+            norm = matplotlib.colors.PowerNorm(gamma=self.plot_opts["gamma"])
+
+        sc = ax.scatter(Flist[order], Elist[order], s=self.plot_opts["s"], c=ov[order], cmap=cmap0,norm = norm)
+        ax.clb = fig.colorbar(sc, label=r'Overlap', ticks=[0, 0.2, 0.4, 0.6, 0.8, 1],location = self.plot_opts['cb_loc'])
+        
+        if self.plot_opts["show_fit"]:
+            for ii in range(len(self.sb.highlight)):
+                ax.plot(self.Ez_list_Vcm,self.quad_fit(self.Ez_list_Vcm,*self.starkFits[ii])*1e-6,'-',color='C'+str(ii))
 
         ax.set_xlabel('Electric Field (V/cm)')
         ax.set_ylabel(r'Energy ($h\cdot$MHz)')
         ax.legend()
-        ax.set_ylim(1e-6*np.array(energy_range_Hz))
+        ax.set_ylim(1e-6*np.array(self.plot_opts["energy_range_Hz"]))
+        ax.set_xlim(np.min(self.Ez_list_Vcm),np.max(self.Ez_list_Vcm))
         ax.grid(axis='both')
 
         return fig,ax

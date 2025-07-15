@@ -213,7 +213,7 @@ class channel:
             
 class state_mqdt:
     
-    def __init__(self,atom,qn,Ai,Aalpha,channels,energy_Hz,tt='npfm',eq_cutoff_Hz = 20000):
+    def __init__(self,atom,qn,Ai,Aalpha,channels,energy_Hz,tt='npfm',eq_cutoff_Hz = 0): 
         """
         Initializes an MQDT state with specified parameters.
 
@@ -225,7 +225,7 @@ class state_mqdt:
             channels (list): List of channels associated with the state.
             energy_Hz (float): Energy of the state in Hz.
             tt (str, optional): Type tag for the quantum numbers. Defaults to 'npfm'.
-            eq_cutoff_Hz (float, optional): Energy cutoff in Hz for equality checks. Defaults to 20000 Hz.
+            eq_cutoff_Hz (float, optional): Energy cutoff in Hz for equality checks. Defaults to 0 Hz.
         """
         
         self.atom = atom
@@ -307,7 +307,7 @@ class state_mqdt:
             return True
         else:
         
-            if self.atom == other.atom and np.round(self.nub*10000)==np.round(other.nub*10000):#np.abs(self.energy_Hz - other.energy_Hz)<self.eq_cutoff_Hz:
+            if self.atom == other.atom and np.round(self.nub*100000000)==np.round(other.nub*100000000):#np.abs(self.energy_Hz - other.energy_Hz)<self.eq_cutoff_Hz:
                 if self.qn == other.qn:
                     return True
                 

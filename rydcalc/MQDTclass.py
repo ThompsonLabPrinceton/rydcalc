@@ -5,7 +5,7 @@ from .constants import *
 
 class mqdt_class:
     def __init__(self, channels, rot_order,
-                 rot_angles, eig_defects, nulims, Uiabar, atom):
+                 rot_angles, eig_defects, nulims, Uiabar, atom,odd_powers=False,e_scale_low_lim = False):
         self.channels = channels
         self.numchannels = len(channels)
         self.rotchannels = rot_order
@@ -26,6 +26,11 @@ class mqdt_class:
         self.RydConst_invcm = 0.01*atom.RydConstHz / cs.c
 
         self.mateps = sys.float_info.epsilon
+
+        self.atom = atom
+
+        self.odd_powers = odd_powers #odd powers in quantum defects expansion for relativistic corrections
+        self.e_scale_low_lim = e_scale_low_lim # if True, energy-expansion in terms of nu with respect to lowest ionization limit, if false energy-expansion in terms of nu with respect to series threshold 
 
     def getCofactorMatrix(self,A):
         ''' Returns the cofactor matrix of matrix A using SVD. See e.g.
@@ -168,11 +173,25 @@ class mqdt_class:
         for i in np.arange(self.numchannels):
             mue=0
 
-            for k,muk in enumerate(self.muvec[i]):
-                if k==0:
-                    mue += muk
-                else:
-                    mue += muk/self.nux(self.ionizationlimits_invcm[i],self.ionizationlimits_invcm[self.nulima[0]],nua)**(k*2)
+
+            if self.odd_powers == True:
+                for k,muk in enumerate(self.muvec[i]):
+                    if k==0:
+                        mue += muk
+                    else:
+                        mue += muk/self.nux(self.ionizationlimits_invcm[i],self.ionizationlimits_invcm[self.nulima[0]],nua)**(k)
+            elif self.e_scale_low_lim == True:
+                for k,muk in enumerate(self.muvec[i]):
+                    if k==0:
+                        mue += muk
+                    else:
+                        mue += muk/nub**(k*2)
+            else:
+                for k,muk in enumerate(self.muvec[i]):
+                    if k==0:
+                        mue += muk
+                    else:
+                        mue += muk/self.nux(self.ionizationlimits_invcm[i],self.ionizationlimits_invcm[self.nulima[0]],nua)**(k*2)
 
             mu.append(mue)
 
@@ -229,9 +248,18 @@ class mqdt_class:
                 if k == 0:
                     mue += muk
                 else:
-                    mue += muk / self.nux(self.ionizationlimits_invcm[i], self.ionizationlimits_invcm[self.nulimb[0]], nub) ** (k * 2)
-                    muediff += (- muk * (2*k) *(1/nub**2+(self.ionizationlimits_invcm[i]-self.ionizationlimits_invcm[self.nulimb[0]])/self.RydConst_invcm)**(k-1))/nub**3
-                    muediff2 +=  (4*(k-1)*k*muk*(1/nub**2+(self.ionizationlimits_invcm[i]-self.ionizationlimits_invcm[self.nulimb[0]])/self.RydConst_invcm)**(k-2))/nub**6 + (6*k*muk*(1/nub**2+(self.ionizationlimits_invcm[i]-self.ionizationlimits_invcm[self.nulimb[0]])/self.RydConst_invcm)**(k-1))/nub**4
+                    if self.odd_powers == True:
+                        mue += muk / self.nux(self.ionizationlimits_invcm[i], self.ionizationlimits_invcm[self.nulimb[0]], nub) ** (k)
+                        muediff += (- muk * (k) *(1/nub**2+(self.ionizationlimits_invcm[i]-self.ionizationlimits_invcm[self.nulimb[0]])/self.RydConst_invcm)**(k/2-1))/nub**3
+                        muediff2 +=  (2*(k/2-1)*k*muk*(1/nub**2+(self.ionizationlimits_invcm[i]-self.ionizationlimits_invcm[self.nulimb[0]])/self.RydConst_invcm)**(k/2-2))/nub**6 + (3*k*muk*(1/nub**2+(self.ionizationlimits_invcm[i]-self.ionizationlimits_invcm[self.nulimb[0]])/self.RydConst_invcm)**(k/2-1))/nub**4
+                    elif self.e_scale_low_lim == True:
+                        mue += muk / nub ** (k * 2)
+                        muediff += -2*k*muk/nub**(2*k+1)
+                        muediff2 += 2*(1 + 2*k)*k*muk/nub**(2 + 2*k)
+                    else:
+                        mue += muk / self.nux(self.ionizationlimits_invcm[i], self.ionizationlimits_invcm[self.nulimb[0]], nub) ** (k * 2)
+                        muediff += (- muk * (2*k) *(1/nub**2+(self.ionizationlimits_invcm[i]-self.ionizationlimits_invcm[self.nulimb[0]])/self.RydConst_invcm)**(k-1))/nub**3
+                        muediff2 +=  (4*(k-1)*k*muk*(1/nub**2+(self.ionizationlimits_invcm[i]-self.ionizationlimits_invcm[self.nulimb[0]])/self.RydConst_invcm)**(k-2))/nub**6 + (6*k*muk*(1/nub**2+(self.ionizationlimits_invcm[i]-self.ionizationlimits_invcm[self.nulimb[0]])/self.RydConst_invcm)**(k-1))/nub**4
 
             mu.append(mue)
             mudiff.append(muediff)
@@ -304,13 +332,13 @@ class mqdt_class:
 
         return A,B,C
 
-    def boundstates(self,nubguess,accuracy = 8):
+    def boundstates(self,nubguess,accuracy = 10):
         ''' calculates the theoretical bound state of the mqdt model close to guess of an effective quantum number with respect to the higher (Ia,Ib) ionization limit.
         Currently uses Halley's method (like Newton's method, but with additional information from second derivative) without brackets around the root. 
         Accuracy 8 corresponds to 1 MHz at nub = 4, 8 kHz at nub = 20, and 0.065 kHz at nub = 100.
         For bracketed root search use scp.optimize.brentq'''
 
-        sol = self.customhalley(self.boundstatesminimizer, x0=nubguess,eps=10**(-10),tol=10**(-accuracy),maxfunctioncalls=1000)
+        sol = self.customhalley(self.boundstatesminimizer, x0=nubguess,eps=10**(-10),tol=10**(-accuracy),maxfunctioncalls=100000)
 
         if sol[1]==True:
             return np.round(sol[0], decimals=accuracy )
@@ -321,7 +349,7 @@ class mqdt_class:
         #return np.round(sol, decimals=accuracy - 1)
 
 
-    def boundstatesinrange(self,range,accuracy=8):
+    def boundstatesinrange(self,range,accuracy=10):
         '''Finds bound states in given range with given accuracy in nub. For nub converging to first ionization limit.
         '''
 
@@ -331,11 +359,15 @@ class mqdt_class:
         for nubguess in np.arange(range[0], range[1], 0.01):
             nutheorb.append(np.round(self.boundstates(nubguess), decimals=accuracy))
 
-        sav =  np.array(nutheorb)
-        idx = np.unique(sav.round(decimals=accuracy-1), return_index=True)
-
-        nutheorb = np.array(nutheorb)[idx[1]]
-        nutheorb = np.round(nutheorb,decimals=accuracy-1)
+        values = np.sort(nutheorb)
+        diffs = np.diff(values)
+        # Where the difference exceeds the threshold, we split
+        split_indices = np.where(diffs > 1e-8)[0] + 1
+        split = np.split(values, split_indices)
+        nutheorb = np.array([g.mean() for g in split])
+        #self.channels[np.argmax(np.array(self.channelcontributions(item)[0])**2)].l
+    
+        nutheorb = [item for item in nutheorb if (maxind := np.argmax(np.array(self.channelcontributions(item)[0])**2)) is not None and self.nux(self.ionizationlimits_invcm[maxind],self.ionizationlimits_invcm[self.nulimb[0]],item) >= self.channels[np.argmax(np.array(self.channelcontributions(item)[0])**2)].l] # filter out bound states with l > nu_i,
 
 
 
@@ -370,7 +402,12 @@ class mqdt_class:
                 if k == 0:
                     mue += muk
                 else:
-                    mue += muk / self.nux(self.ionizationlimits_invcm[i], self.ionizationlimits_invcm[self.nulimb[0]], nub) ** (k * 2)
+                    if self.odd_powers == True:
+                        mue += muk / self.nux(self.ionizationlimits_invcm[i], self.ionizationlimits_invcm[self.nulimb[0]], nub) ** (k)
+                    elif self.e_scale_low_lim == True:
+                        mue += muk / nub ** (k * 2)
+                    else:
+                        mue += muk / self.nux(self.ionizationlimits_invcm[i], self.ionizationlimits_invcm[self.nulimb[0]], nub) ** (k * 2)
             mu.append(mue)
 
         dmu = []
@@ -379,7 +416,12 @@ class mqdt_class:
             dmue = 0
             for k,muk in enumerate(self.muvec[i]):
                 if k != 0:
-                    dmue += - 2*k * muk / self.nux(self.ionizationlimits_invcm[i], self.ionizationlimits_invcm[self.nulimb[0]], nub) ** ((k-1) * 2)
+                    if self.odd_powers == True:
+                        dmue += - k * muk / self.nux(self.ionizationlimits_invcm[i], self.ionizationlimits_invcm[self.nulimb[0]], nub) ** ((k/2-1) * 2)
+                    elif self.e_scale_low_lim == True:
+                        dmue += - 2*k * muk / nub ** ((k-1) * 2)
+                    else:
+                        dmue += - 2*k * muk / self.nux(self.ionizationlimits_invcm[i], self.ionizationlimits_invcm[self.nulimb[0]], nub) ** ((k-1) * 2)
             dmu.append(dmue)
 
         eps = 10**(-6)
@@ -394,7 +436,7 @@ class mqdt_class:
         Aalpha = []
         # Eq. (5) from 0. ROBAUX, and M. AYMAR, Comp. Phys. Commun. 25, 223—236 (1982)
         for i in np.arange(self.numchannels):
-            Aalpha.append(cofacjalpha[0, i] / np.sqrt(np.sum(cofacjalpha[0, :] ** 2)))
+                Aalpha.append(cofacjalpha[0, i] / np.sqrt(np.sum(cofacjalpha[0, :] ** 2)))
 
         Ai = np.array([])
 
@@ -448,10 +490,11 @@ class mqdt_class_rydberg_ritz(mqdt_class):
     ''' Adaptation of the MQDT class for single-channel channel quantum defect theory.
     '''
 
-    def __init__(self, channels,deltas,atom,HFlimit = None):
+    def __init__(self, channels,deltas,atom,HFlimit = None,odd_powers = False):
         self.channels = [channels]
         self.deltas=deltas
         self.HFlimit = HFlimit
+        self.odd_powers = odd_powers    
 
         self.atom = atom
 
@@ -476,7 +519,7 @@ class mqdt_class_rydberg_ritz(mqdt_class):
 
 
 
-    def boundstates(self, nubguess,accuracy=8):
+    def boundstates(self, nubguess,accuracy=10):
 
         if self.HFlimit == "upper" or self.HFlimit == None:
             #searchrange = [np.ceil(nubguess - 1.5), np.floor(nubguess + 1.5)]
@@ -492,15 +535,23 @@ class mqdt_class_rydberg_ritz(mqdt_class):
         approxdelta = 0
         approxnu = (searchrange[0]+searchrange[1])/2
 
-        for k,di in enumerate(self.deltas):
-            approxdelta += di / (approxnu) ** (2 * k)
+        if self.odd_powers == True:
+            for k,di in enumerate(self.deltas):
+                approxdelta += di / (approxnu) ** (k)
+        else:
+            for k,di in enumerate(self.deltas):
+                approxdelta += di / (approxnu) ** (2 * k)
 
         n=np.round(approxnu+approxdelta)
 
         nutheor=n
 
-        for k,di in enumerate(self.deltas):
-            nutheor += -  di / (n-self.deltas[0]) ** (2 * k)
+        if self.odd_powers == True:
+            for k,di in enumerate(self.deltas):
+                nutheor += -  di / (n) ** (k)
+        else:   
+            for k,di in enumerate(self.deltas):
+                nutheor += -  di / (n-self.deltas[0]) ** (2 * k)
 
         if self.HFlimit == "upper" or self.HFlimit == None:
             return np.round(nutheor, decimals=accuracy-1)
@@ -514,3 +565,91 @@ class mqdt_class_rydberg_ritz(mqdt_class):
         Ai = [1.0]
         Aalpha = [1.0]
         return [Ai,Aalpha]
+    
+class mqdt_class_wrapper(mqdt_class):
+    ''' Wrapper class for the MQDT class. Allows for simultaneous treatment of un-coupled channels with idential quantum numbers.    '''
+
+    def __init__(self, classlist):
+
+        self.classlist = classlist
+
+        # Check if all classes have the same atom attribute
+        if not all(cls.atom == classlist[0].atom for cls in classlist):
+            raise ValueError("All classes in classlist must have the same atom attribute.")
+
+        self.atom = classlist[0].atom
+
+        self.channels = []
+
+        for i in self.classlist:
+            self.channels.extend(i.channels)
+
+        self.numchannels = len(self.channels)
+
+        self.nulima = [0]
+        self.nulimb = [0]
+
+        self.RydConst_invcm = 0.01*self.atom.RydConstHz / cs.c
+
+        self.ionizationlimits_invcm=[]
+        for i in self.classlist:
+            self.ionizationlimits_invcm.extend(i.ionizationlimits_invcm)
+                
+
+    def boundstates(self, nubguess,accuracy=10):
+
+        ''' Returns the closest bound state to nubguess for all channels in the class list. 
+        '''
+        channelnub = [] 
+
+        for i in self.classlist:
+            channelnub.append(i.boundstates(nubguess, accuracy))
+
+        channelsel = np.argmin(np.abs(np.array(channelnub)-nubguess)) # finds the channel with the closest bound state to nubguess
+
+        return np.round(channelnub[channelsel], decimals=accuracy )
+    
+    def boundstatesinrange(self, range, accuracy=10):
+
+        ''' Returns the bound state in range for all channels in the class list. 
+        '''
+        nua = np.array([])
+        nub = np.array([])
+
+        for i in self.classlist:
+            [nuachan,nubchan] = i.boundstatesinrange(range, accuracy)
+            nua = np.append(nua,nuachan)
+            nub = np.append(nub,nubchan)
+
+        return [nua,nub]
+    
+
+
+    def channelcontributions(self, nub):
+        ''' Channel contributions for wrapped MQDT classes. 
+        '''
+
+        
+        channelnub = [] 
+
+        for i in self.classlist:
+            channelnub.append(i.boundstates(nub))
+
+        channelsel = np.argmin(np.abs(np.array(channelnub)-nub)) # finds the channel with the closest bound state to nubguess
+
+        Ai = []
+        Aalpha = []
+
+        for count,i in enumerate(self.classlist):
+            if count == channelsel:
+                [Aichan,Aalphachan] = i.channelcontributions(nub)
+                Ai.extend(Aichan)
+                Aalpha.extend(Aalphachan)
+            else:
+                Ai.extend([0]*len(i.channels))
+                Aalpha.extend([0]*len(i.channels))
+
+
+        return [Ai,Aalpha]
+    
+

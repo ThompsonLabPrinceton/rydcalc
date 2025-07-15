@@ -4,6 +4,7 @@ import scipy.integrate
 import scipy.interpolate
 import scipy.constants as cs
 import scipy.optimize
+from mpmath import whitw
 
 import sympy
 
@@ -171,7 +172,7 @@ class AlkaliAtom(Hydrogen):
         return -3. / (4. * r) + 4*r*(2*self.mu*(self.get_energy_au(st) - threshold_au - ch.core.potential.potential(ch,r)) - ch.l * (ch.l + 1) / (r**2))
   
     
-    def radial_wavefunction(self,st,r,ch = None):
+    def radial_wavefunction(self,st,r,ch = None, whittaker_wf = False):
         """
         Compute the radial wavefunction for a given state and radius. The results are cached within the
         st object, so do not need to be computed again in the same session.
@@ -184,10 +185,16 @@ class AlkaliAtom(Hydrogen):
         ch : Channel object, optional
             The MQDT channel for which the wavefunction is computed. If None, the first channel of the state is used.
 
+        whittaker_wf : bool, optional
+            If True, computes the wavefunction using the generalized Coulomb Whittaker function (see self.whittaker_wfct).
+            If False (default), computes the wavefunction numerically using the Numerov method.
+
         Returns:
         float or ndarray:
             The value of the wavefunction at the given radii.
         """
+        
+        whittaker_wf = st.whittaker_wfct
         
         if ch is None:
             ch = st.channels[0]
@@ -207,7 +214,10 @@ class AlkaliAtom(Hydrogen):
             st.wf_x_min[ch_idx] = min(st.wf_x)
             st.wf_x_max[ch_idx] = max(st.wf_x)
             
-            st.wf_interp[ch_idx] = scipy.interpolate.interp1d(st.wf_x,st.wf_y)
+            if whittaker_wf==False:
+                st.wf_interp[ch_idx] = scipy.interpolate.interp1d(st.wf_x,st.wf_y)
+            else:
+                st.wf_interp[ch_idx] = lambda r : self.whittaker_wfct(st,ch,r)
         
         return st.wf_interp[ch_idx](r)
     
@@ -349,6 +359,17 @@ class AlkaliAtom(Hydrogen):
     #@functools.lru_cache(maxsize=256)
     def numerov_cpp_wrap(self,*args):
         return self.NumerovWavefunction(*args)
+    
+    def whittaker_wfct(self,st,ch,r):
+        """ Generalized Coulomb wavefunction using Whittaker function """
+        nu = 1 / np.sqrt((ch.core.Ei_Hz - st.energy_Hz) / (self.RydConstHz))
+        l = ch.l
+        def whitw_func(r):
+            return whitw(nu,l+1/2,(2*r/(nu)))
+        whitw_np = np.vectorize(whitw_func)
+
+        return 1/np.sqrt(nu**2*sp.special.gamma(nu+l+1)*sp.special.gamma(nu-l))*whitw_np(np.array(r))
+
     
     def numerov_py(self,st,ch):
         """

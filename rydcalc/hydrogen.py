@@ -284,7 +284,7 @@ class Hydrogen:
     # but creates the potential for non-correctness if you are playing with the quantum defect models -- it is
     # not guaranteed that changes will be passed through to already existing state objects.
     @functools.lru_cache(maxsize=1024)
-    def get_state(self,qn,tt='nlm'):
+    def get_state(self,qn,tt='nlm',whittaker_wfct=False):
         """
         Retrieve or create a quantum state based on quantum numbers and type.
 
@@ -293,6 +293,10 @@ class Hydrogen:
             Quantum numbers specifying the state.
         tt : str, optional
             Type of quantum numbers provided, defaults to 'nlm'.
+
+        whittaker_wf : bool, optional
+            If True, computes the wavefunction using the generalized Coulomb Whittaker function (see self.whittaker_wfct).
+            If False (default), computes the wavefunction numerically using the Numerov method.
 
         Returns:
         state object or None
@@ -355,6 +359,7 @@ class Hydrogen:
         st = state(self,(n,(-1)**l,j,m),my_ch,energy_Hz = energy_Hz)
         st.nu = n - defect
         st.nub = st.nu
+        st.whittaker_wfct = whittaker_wfct
         return st
         
     def repr_state(self,st):
