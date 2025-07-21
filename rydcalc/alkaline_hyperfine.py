@@ -107,17 +107,17 @@ class Ytterbium171(AlkalineAtom):
         self.p.set_prefix('171YbS12')
 
         MQDT_S12 = mqdt_class(channels=mqdt_s12['channels'],
-                              eig_defects=[[self.p.value('1S0_mu0',0.357488757),self.p.value('1S0_mu0_1',0.163255076)],
-                                           [self.p.value('1S0_mu1',0.203917828)], [self.p.value('1S0_mu2',0.116813499)],
-                                           [self.p.value('1S0_mu3',0.287210377)], [self.p.value('1S0_mu4',0.247550262)],
-                                           [self.p.value('1S0_mu5',0.148686263)],
-                                           [self.p.value('3s1_rr_%d'%it,val) for it,val in enumerate([0.438803844,3.54561559, -10673.2496, 7702824.55, -2255973430.0])]],
+                              eig_defects=[[self.p.value('1S0_mu0',0.357489847),self.p.value('1S0_mu0_1',0.165981371)],
+                                           [self.p.value('1S0_mu1',0.203918644)], [self.p.value('1S0_mu2',0.116819032)],
+                                           [self.p.value('1S0_mu3',0.287350241)], [self.p.value('1S0_mu4',0.247621114)],
+                                           [self.p.value('1S0_mu5',0.148681324)],
+                                           [self.p.value('3s1_rr_%d'%it,val) for it,val in enumerate([0.438542187,3.78366407, -10709.7378, 8054542.58, -2523011670.0])]],
                               rot_order=[[1, 2], [1, 3], [1, 4], [3, 4], [3, 5], [1, 6]],
-                              rot_angles=[[self.p.value('1S0_th12',0.13179534)], [self.p.value('1S0_th13',0.29748039)],
-                                          [self.p.value('1S0_th14',0.0553920359)],
-                                          [self.p.value('1S0_th34',0.100843905)],
-                                          [self.p.value('1S0_th35',0.10317753)],
-                                          [self.p.value('1S0_th16',0.137709223)]],
+                              rot_angles=[[self.p.value('1S0_th12',0.131755467)], [self.p.value('1S0_th13',0.297504211)],
+                                          [self.p.value('1S0_th14',0.055421439)],
+                                          [self.p.value('1S0_th34',0.100871756)],
+                                          [self.p.value('1S0_th35',0.103123032)],
+                                          [self.p.value('1S0_th16',0.137753117)]],
                               Uiabar=UiaFbar_S12, nulims=[[0], [6]],atom=self)
 
         self.mqdt_models.append({'L': 0, 'F': 1 / 2, 'model': MQDT_S12})
@@ -126,7 +126,7 @@ class Ytterbium171(AlkalineAtom):
 
         # For S F=3/2 QDT model
         QDT_S32 = mqdt_class_rydberg_ritz(channels=mqdt_s12['channels'][-1],
-                                          deltas=[self.p.value('3s1_rr_%d'%it,val) for it,val in enumerate([0.438803844,3.54561559, -10673.2496, 7702824.55, -2255973430.0])],atom=self,HFlimit="upper")
+                                          deltas=[self.p.value('3s1_rr_%d'%it,val) for it,val in enumerate([0.438542187,3.78366407, -10709.7378, 8054542.58, -2523011670.0])],atom=self,HFlimit="upper")
         self.mqdt_models.append({'L': 0, 'F': 3 / 2, 'model': QDT_S32})
 
         # For P F=1/2 QDT model
@@ -174,12 +174,12 @@ class Ytterbium171(AlkalineAtom):
 
         # this includes 1,3P1 and 3P0 MQDT models of 174Yb#
         MQDT_P12 = mqdt_class(channels=mqdt_p12['channels'],
-                              eig_defects=[[self.p.value('13p1_mu0',0.922046003), self.p.value('13p1_mu0_1',2.17932092)],
-                                           [self.p.value('13p1_mu1', 0.981076381), self.p.value('13p1_mu1_1',-4.48995034)], [self.p.value('13p1_mu2', 0.229019212)],
-                                           [self.p.value('13p1_mu3',0.205999445)],[self.p.value('13p1_mu4', 0.19352756)],[self.p.value('13p1_mu5', 0.181271472)],
-                                           [self.p.value('3p0_mu0', 0.953288122), self.p.value('3p0_mu0_1',-0.0298396847)], [self.p.value('3p0_mu1',0.198451139)]],
+                              eig_defects=[[self.p.value('13p1_mu0',0.922094502), self.p.value('13p1_mu0_1',2.12370136)],
+                                           [self.p.value('13p1_mu1', 0.981191543), self.p.value('13p1_mu1_1',-4.54209175)], [self.p.value('13p1_mu2', 0.229094016)],
+                                           [self.p.value('13p1_mu3',0.206073107)],[self.p.value('13p1_mu4', 0.193527627)],[self.p.value('13p1_mu5', 0.181165673)],
+                                           [self.p.value('3p0_mu0', 0.953185132), self.p.value('3p0_mu0_1',0.0277444042)], [self.p.value('3p0_mu1',0.198448494)]],
                               rot_order=[[1, 2], [2, 7] ,[1,3],  [1, 4], [1,5], [1,6],[2, 3], [2, 4], [2, 5],[2,6],[7,8]],
-                              rot_angles=[[self.p.value('13p1_th12_0', -0.100292816),self.p.value('13p1_th12_2', 149.140925),self.p.value('13p1_th12_4', -13487.7692)],[self.p.value('13p1_3P0_th27',-0.0016592076)],[self.p.value('13p1_th13',-0.0727917308)], [self.p.value('13p1_th14',-0.0669120237)],[self.p.value('13p1_th15',-0.0221321759)],[self.p.value('13p1_th16', -0.107302569)], [self.p.value('13p1_th23',0.0396527798)], [self.p.value('13p1_th24', 0.0596597186)], [self.p.value('13p1_th25', 0.0861416497)],[self.p.value('13p1_th26',0.0565415641)], [self.p.value('3p0_th12',0.163175562)]],
+                              rot_angles=[[self.p.value('13p1_th12_0', -0.102285383),self.p.value('13p1_th12_2', 153.521338),self.p.value('13p1_th12_4', -15393.2283)],[self.p.value('13p1_3P0_th27',-0.00168607392)],[self.p.value('13p1_th13',-0.0719467433)], [self.p.value('13p1_th14',-0.0673315968)],[self.p.value('13p1_th15',-0.0221077377)],[self.p.value('13p1_th16', -0.107638329)], [self.p.value('13p1_th23',0.0416653549)], [self.p.value('13p1_th24', 0.0590660991)], [self.p.value('13p1_th25', 0.0861585559)],[self.p.value('13p1_th26',0.0566417469)], [self.p.value('3p0_th12',0.163113423)]],
                               Uiabar=UiaFbar_P12, nulims=[[6],[0,1],],atom=self)
 
         self.mqdt_models.append({'L': 1, 'F': 1 / 2, 'model': MQDT_P12})
@@ -240,14 +240,14 @@ class Ytterbium171(AlkalineAtom):
 
         # this includes 1,3P1 MQDT, 3P2, and 3F2 MQDT models of 174Yb,
         MQDT_P32 = mqdt_class(channels=mqdt_p32['channels'],
-                              eig_defects=[[self.p.value('13p1_mu0',0.922046003), self.p.value('13p1_mu0_1',2.17932092)],
-                                           [self.p.value('13p1_mu1', 0.981076381), self.p.value('13p1_mu1_1',-4.48995034)], [self.p.value('13p1_mu2', 0.229019212)],
-                                           [self.p.value('13p1_mu3',0.205999445)],[self.p.value('13p1_mu4', 0.19352756)],[self.p.value('13p1_mu5', 0.181271472)],
-                                           [self.p.value('3p2_mu0', 0.926908753), self.p.value('3p2_mu0_1', -4.6228148), self.p.value('3p2_mu0_2', 453.565911, 100)], [self.p.value('3p2_mu1', 0.223859222,0.005)],
-                                                 [self.p.value('3p2_mu2', 0.240057861,0.005)],
-                                                 [self.p.value('3p2_mu3', 0.184824687,0.005)], [self.p.value('3f2_rr_0', 0.0718810048),self.p.value('3f2_rr_1',-1.08216233),self.p.value('3f2_rr_2',-38.2507093)]],
+                              eig_defects=[[self.p.value('13p1_mu0',0.922094502), self.p.value('13p1_mu0_1',2.12370136)],
+                                           [self.p.value('13p1_mu1', 0.981191543), self.p.value('13p1_mu1_1',-4.54209175)], [self.p.value('13p1_mu2', 0.229094016)],
+                                           [self.p.value('13p1_mu3',0.206073107)],[self.p.value('13p1_mu4', 0.193527627)],[self.p.value('13p1_mu5', 0.181165673)],
+                                           [self.p.value('3p2_mu0', 0.925345494), self.p.value('3p2_mu0_1', -3.23594086), self.p.value('3p2_mu0_2', 80.2535181, 100)], [self.p.value('3p2_mu1', 0.232649227,0.005)],
+                                                 [self.p.value('3p2_mu2', 0.210070444,0.005)],
+                                                 [self.p.value('3p2_mu3', 0.185699031,0.005)], [self.p.value('3f2_rr_0', 0.0718955585),self.p.value('3f2_rr_1',-1.0913707),self.p.value('3f2_rr_2',-38.4618954)]],
                               rot_order=[[1, 2], [1, 3], [1, 4], [1, 5],[1, 6], [2, 3], [2, 4], [2, 5], [2,6],[7,8],[7,9],[7,10],[7,11]],
-                              rot_angles=[[self.p.value('13p1_th12_0', -0.100292816),self.p.value('13p1_th12_2', 149.140925),self.p.value('13p1_th12_4', -13487.7692)],[self.p.value('13p1_th13',-0.0727917308)], [self.p.value('13p1_th14',-0.0669120237)],[self.p.value('13p1_th15',-0.0221321759)],[self.p.value('13p1_th16', -0.107302569)], [self.p.value('13p1_th23',0.0396527798)], [self.p.value('13p1_th24', 0.0596597186)], [self.p.value('13p1_th25', 0.0861416497)],[self.p.value('13p1_th26',0.0565415641)],[self.p.value('3p2_th12', 0.0657620037,0.1)], [self.p.value('3p2_th13', 0.0215995148,0.03)], [self.p.value('3p2_th14',-0.028252844,0.03)], [self.p.value('3f2_th', 0.0184267375)]],
+                              rot_angles=[[self.p.value('13p1_th12_0', -0.102285383),self.p.value('13p1_th12_2', 153.521338),self.p.value('13p1_th12_4', -15393.2283)],[self.p.value('13p1_th13',-0.0719467433)], [self.p.value('13p1_th14',-0.0673315968)],[self.p.value('13p1_th15',-0.0221077377)],[self.p.value('13p1_th16', -0.107638329)], [self.p.value('13p1_th23',0.0416653549)], [self.p.value('13p1_th24', 0.0590660991)], [self.p.value('13p1_th25', 0.0861585559)],[self.p.value('13p1_th26',0.0566417469)],[self.p.value('3p2_th12', 0.0703574701,0.1)], [self.p.value('3p2_th13', 0.0235308506,0.03)], [self.p.value('3p2_th14',-0.0295876723,0.03)], [self.p.value('3f2_th', 0.018377516)]],
                               Uiabar=UiaFbar_P32, nulims=[[6],[0,1,10]],atom=self)
 
         self.mqdt_models.append({'L': 1, 'F': 3 / 2, 'model': MQDT_P32})
@@ -295,12 +295,12 @@ class Ytterbium171(AlkalineAtom):
         
         # this includes 1,3D2 MQDT and 3D1 QDT models of 174Yb. Introduced S-T mixing angle
         MQDT_D32 = mqdt_class(channels=mqdt_d32['channels'],
-                              eig_defects=[[self.p.value('13d2_mu0',0.730541589), self.p.value('13d2_mu0_1',-0.0967938662)],
-                                           [self.p.value('13d2_mu1',0.751542685), self.p.value('13d2_mu1_1',0.00038836127)],
-                                           [self.p.value('13d2_mu2',0.195864083)], [self.p.value('13d2_mu3',0.235944408)],
-                                           [self.p.value('13d2_mu4',0.147483609)], [self.p.value('3d1_rr_0',2.75334159), self.p.value('3d1_rr_1',-1.80187083,1), self.p.value('3d1_rr_2',986.918851,100)]],
+                              eig_defects=[[self.p.value('13d2_mu0',0.73056016), self.p.value('13d2_mu0_1',-0.108286264)],
+                                           [self.p.value('13d2_mu1',0.75155852), self.p.value('13d2_mu1_1',0.000367204397)],
+                                           [self.p.value('13d2_mu2',0.195831577)], [self.p.value('13d2_mu3',0.236133225)],
+                                           [self.p.value('13d2_mu4',0.147506921)], [self.p.value('3d1_rr_0',2.75336354), self.p.value('3d1_rr_1',-1.84349555,1), self.p.value('3d1_rr_2',994.210321,100)]],
                               rot_order=[[1, 2], [1, 3], [1, 4], [2, 4], [1, 5], [2, 5]],
-                              rot_angles=[[self.p.value('13d2_th12_0', 0.220048245),self.p.value('13d2_th12_2', -14.9486)], [self.p.value('13d2_th13',0.00427599)], [self.p.value('13d2_th14',0.0381563093)], [self.p.value('13d2_th24',-0.00700797918)], [self.p.value('13d2_th15',0.109380331)], [self.p.value('13d2_th25',0.0635544456)]],
+                              rot_angles=[[self.p.value('13d2_th12_0', 0.22146327),self.p.value('13d2_th12_2', -16.2798928)], [self.p.value('13d2_th13',0.00431695191)], [self.p.value('13d2_th14',0.0381576181)], [self.p.value('13d2_th24',-0.00708200703)], [self.p.value('13d2_th15',0.109346659)], [self.p.value('13d2_th25',0.0636016813)]],
                               Uiabar=UiaFbar_D32, nulims=[[5],[0, 1]],atom=self)
 
         self.mqdt_models.append({'L': 2, 'F': 3 / 2, 'model': MQDT_D32})
@@ -344,12 +344,12 @@ class Ytterbium171(AlkalineAtom):
 
         # this includes 1,3D2 MQDT and 3D3 QDT models of 174Yb. Introduced S-T mixing angle
         MQDT_D52 = mqdt_class(channels=mqdt_d52['channels'],
-                              eig_defects=[[self.p.value('13d2_mu0',0.730541589), self.p.value('13d2_mu0_1',-0.0967938662)],
-                                           [self.p.value('13d2_mu1',0.751542685), self.p.value('13d2_mu1_1',0.00038836127)],
-                                           [self.p.value('13d2_mu2',0.195864083)], [self.p.value('13d2_mu3',0.235944408)],
-                                           [self.p.value('13d2_mu4',0.147483609)],  [self.p.value('3d3_rr_0',2.72865616), self.p.value('3d3_rr_1',0.793185994,1), self.p.value('3d3_rr_2',-523.858959,100)]],
+                              eig_defects=[[self.p.value('13d2_mu0',0.73056016), self.p.value('13d2_mu0_1',-0.108286264)],
+                                           [self.p.value('13d2_mu1',0.75155852), self.p.value('13d2_mu1_1',0.000367204397)],
+                                           [self.p.value('13d2_mu2',0.195831577)], [self.p.value('13d2_mu3',0.236133225)],
+                                           [self.p.value('13d2_mu4',0.147506921)],  [self.p.value('3d3_rr_0',2.72861481), self.p.value('3d3_rr_1',0.79979111,1), self.p.value('3d3_rr_2',-484.236631,100)]],
                               rot_order=[[1, 2], [1, 3], [1, 4], [2, 4], [1, 5], [2, 5]],
-                              rot_angles=[[self.p.value('13d2_th12_0', 0.220048245),self.p.value('13d2_th12_2', -14.9486)], [self.p.value('13d2_th13',0.00427599)], [self.p.value('13d2_th14',0.0381563093)], [self.p.value('13d2_th24',-0.00700797918)], [self.p.value('13d2_th15',0.109380331)], [self.p.value('13d2_th25',0.0635544456)]],
+                              rot_angles=[[self.p.value('13d2_th12_0', 0.22146327),self.p.value('13d2_th12_2', -16.2798928)], [self.p.value('13d2_th13',0.00431695191)], [self.p.value('13d2_th14',0.0381576181)], [self.p.value('13d2_th24',-0.00708200703)], [self.p.value('13d2_th15',0.109346659)], [self.p.value('13d2_th25',0.0636016813)]],
                               Uiabar=UiaFbar_D52, nulims=[[5],[0, 1]],atom=self)
 
         self.mqdt_models.append({'L': 2, 'F': 5 / 2, 'model': MQDT_D52})
@@ -357,12 +357,12 @@ class Ytterbium171(AlkalineAtom):
 
         # For D F=1/2 QDT model. Which is purely Fc=1, q.d. taken from 3D1 fit 171Yb F=3/2
         QDT_D12 = mqdt_class_rydberg_ritz(channels=mqdt_d32['channels'][1],
-                                          deltas=[2.75334159, -1.80187083,986.918851], atom=self, HFlimit = "upper")
+                                          deltas=[2.75336354, -1.84349555,994.210321], atom=self, HFlimit = "upper")
         self.mqdt_models.append({'L': 2, 'F': 1 / 2, 'model': QDT_D12})
 
         # For D F=7/2 QDT model. Which is purely Fc=1, q.d. taken from 3D3 fit 171Yb F=3/2
         QDT_D72 = mqdt_class_rydberg_ritz(channels=mqdt_d32['channels'][0],
-                                          deltas=[2.72865616, 0.793185994,-523.858959], atom=self,HFlimit = "upper")
+                                          deltas=[2.72861481, 0.79979111,-484.236631], atom=self,HFlimit = "upper")
         self.mqdt_models.append({'L': 2, 'F': 7 / 2, 'model': QDT_D72})
 
         mqdt_f52 = {'cores': [
@@ -418,12 +418,12 @@ class Ytterbium171(AlkalineAtom):
         self.p.set_prefix('171YbF52')        
 
         MQDT_F52 = mqdt_class(channels=mqdt_f52['channels'],
-                              eig_defects=[[self.p.value('13f3_mu0',0.27707535), self.p.value('13f3_mu0_1',-13.2829133)], [self.p.value('13f3_mu1',0.0719827367), self.p.value('13f3_mu1_1',-0.741492064)], [self.p.value('13f3_mu2',0.250829254)],[self.p.value('13f3_mu3',0.227042016)],[self.p.value('13f3_mu4',0.17576256)],[self.p.value('13f3_mu5',0.19654694)],[self.p.value('13f3_mu6',0.214351625)],
-                                           [self.p.value('3p2_mu0', 0.926908753), self.p.value('3p2_mu0_1', -4.6228148), self.p.value('3p2_mu0_2', 453.565911, 100)], [self.p.value('3p2_mu1', 0.223859222,0.005)],
-                                            [self.p.value('3p2_mu2', 0.240057861,0.005)],[self.p.value('3p2_mu3', 0.184824687,0.005)], 
-                                            [self.p.value('3f2_rr_0', 0.0718810048),self.p.value('3f2_rr_1',-1.08216233),self.p.value('3f2_rr_2',-38.2507093)]],
+                              eig_defects=[[self.p.value('13f3_mu0',0.277086649), self.p.value('13f3_mu0_1',-13.290196)], [self.p.value('13f3_mu1',0.0719837014), self.p.value('13f3_mu1_1',-0.754736076)], [self.p.value('13f3_mu2',0.251457795)],[self.p.value('13f3_mu3',0.227434828)],[self.p.value('13f3_mu4',0.175780645)],[self.p.value('13f3_mu5',0.196547521)],[self.p.value('13f3_mu6',0.21440857)],
+                                           [self.p.value('3p2_mu0', 0.925345494), self.p.value('3p2_mu0_1', -3.23594086), self.p.value('3p2_mu0_2', 80.2535181, 100)], [self.p.value('3p2_mu1', 0.232649227,0.005)],
+                                                 [self.p.value('3p2_mu2', 0.210070444,0.005)],
+                                                 [self.p.value('3p2_mu3', 0.185699031,0.005)], [self.p.value('3f2_rr_0', 0.0718955585),self.p.value('3f2_rr_1',-1.0913707),self.p.value('3f2_rr_2',-38.4618954)]],
                               rot_order=[[1,2],[1, 3],[1,4],[1,5],[1,6],[1,7],[2, 3],[2,4],[2,5],[2,6],[2,7],[8, 9], [8, 10], [8, 11],[8,12]],
-                              rot_angles=[[self.p.value('13f3_th12_0', -0.0208481417),self.p.value('13f3_th12_2', 0.239045493)],[self.p.value('13f3_th13',-0.0593782568)],[self.p.value('13f3_th14',-0.0755947274)],[self.p.value('13f3_th15',0.122678758)],[self.p.value('13f3_th16',-0.0400418576)],[self.p.value('13f3_th17',0.0646373252)], [self.p.value('13f3_th23',-0.0684538786)],[self.p.value('13f3_th24', 0.0352130279)],[self.p.value('13f3_th25',-0.0326572035)],[self.p.value('13f3_th26',-0.050215299)],[self.p.value('13f3_th27',0.0453892695)],[self.p.value('3p2_th12', 0.0657620037,0.1)], [self.p.value('3p2_th13', 0.0215995148,0.03)], [self.p.value('3p2_th14',-0.028252844,0.03)], [self.p.value('3f2_th', 0.0184267375)]],
+                              rot_angles=[[self.p.value('13f3_th12_0', -0.0209955122),self.p.value('13f3_th12_2', 0.251041249)],[self.p.value('13f3_th13',-0.0585753224)],[self.p.value('13f3_th14',-0.0750574327)],[self.p.value('13f3_th15',0.122671919)],[self.p.value('13f3_th16',-0.0401036164)],[self.p.value('13f3_th17',0.0654271994)], [self.p.value('13f3_th23',-0.0683007974)],[self.p.value('13f3_th24', 0.035415976)],[self.p.value('13f3_th25',-0.0327625807)],[self.p.value('13f3_th26',-0.050225071)],[self.p.value('13f3_th27',0.0455759316)],[self.p.value('3p2_th12', 0.0703574701,0.1)], [self.p.value('3p2_th13', 0.0235308506,0.03)], [self.p.value('3p2_th14',-0.0295876723,0.03)], [self.p.value('3f2_th', 0.018377516)]],
                               Uiabar=UiaFbar_F52, nulims=[[11], [0, 1, 7]], atom=self)
 
         self.mqdt_models.append({'L': 1, 'F': 5 / 2, 'model': MQDT_F52})
@@ -473,9 +473,9 @@ class Ytterbium171(AlkalineAtom):
 
         # this includes 1,3F3 MQDT of 174Yb from Lehec'c thesis and a 3F4 QDT model guess from the P F=3/2 residuals
         MQDT_F72 = mqdt_class(channels=mqdt_f72['channels'],
-                              eig_defects=[[self.p.value('13f3_mu0',0.27707535), self.p.value('13f3_mu0_1',-13.2829133)], [self.p.value('13f3_mu1',0.0719827367), self.p.value('13f3_mu1_1',-0.741492064)], [self.p.value('13f3_mu2',0.250829254)],[self.p.value('13f3_mu3',0.227042016)],[self.p.value('13f3_mu4',0.17576256)],[self.p.value('13f3_mu5',0.19654694)],[self.p.value('13f3_mu6',0.214351625)], [self.p.value('3f4_rr_0',  0.0834066138), self.p.value('3f4_rr_2', -1.11349283), self.p.value('3f4_rr_4', -1539.63739)], ],
+                              eig_defects=[[self.p.value('13f3_mu0',0.277086649), self.p.value('13f3_mu0_1',-13.290196)], [self.p.value('13f3_mu1',0.0719837014), self.p.value('13f3_mu1_1',-0.754736076)], [self.p.value('13f3_mu2',0.251457795)],[self.p.value('13f3_mu3',0.227434828)],[self.p.value('13f3_mu4',0.175780645)],[self.p.value('13f3_mu5',0.196547521)],[self.p.value('13f3_mu6',0.21440857)], [self.p.value('3f4_rr_0',  0.0834193873), self.p.value('3f4_rr_2', -1.11453386), self.p.value('3f4_rr_4', -1545.71844)], ],
                               rot_order=[[1,2],[1, 3],[1,4],[1,5],[1,6],[1,7],[2, 3],[2,4],[2,5],[2,6],[2,7],],
-                              rot_angles=[[self.p.value('13f3_th12_0', -0.0208481417),self.p.value('13f3_th12_2', 0.239045493)],[self.p.value('13f3_th13',-0.0593782568)],[self.p.value('13f3_th14',-0.0755947274)],[self.p.value('13f3_th15',0.122678758)],[self.p.value('13f3_th16',-0.0400418576)],[self.p.value('13f3_th17',0.0646373252)], [self.p.value('13f3_th23',-0.0684538786)],[self.p.value('13f3_th24', 0.0352130279)],[self.p.value('13f3_th25',-0.0326572035)],[self.p.value('13f3_th26',-0.050215299)],[self.p.value('13f3_th27',0.0453892695)],],
+                              rot_angles=[[self.p.value('13f3_th12_0', -0.0209955122),self.p.value('13f3_th12_2', 0.251041249)],[self.p.value('13f3_th13',-0.0585753224)],[self.p.value('13f3_th14',-0.0750574327)],[self.p.value('13f3_th15',0.122671919)],[self.p.value('13f3_th16',-0.0401036164)],[self.p.value('13f3_th17',0.0654271994)], [self.p.value('13f3_th23',-0.0683007974)],[self.p.value('13f3_th24', 0.035415976)],[self.p.value('13f3_th25',-0.0327625807)],[self.p.value('13f3_th26',-0.050225071)],[self.p.value('13f3_th27',0.0455759316)],],
                               Uiabar=UiaFbar_F72, nulims=[[7], [0, 1]], atom=self)
 
         self.mqdt_models.append({'L': 3, 'F': 7 / 2, 'model': MQDT_F72})
@@ -486,7 +486,7 @@ class Ytterbium171(AlkalineAtom):
 
         # Guess for F F=9/2 QDT model. Which is purely Fc=1
         QDT_F92 = mqdt_class_rydberg_ritz(channels=mqdt_f52['channels'][0],
-                                          deltas=[self.p.value('3f4_rr_0', 0.0834066138), self.p.value('3f4_rr_2', -1.11349283), self.p.value('3f4_rr_4', -1539.63739)], atom=self, HFlimit="upper")
+                                          deltas=[self.p.value('3f4_rr_0', 0.0834193873), self.p.value('3f4_rr_2', -1.11453386), self.p.value('3f4_rr_4', -1545.71844)], atom=self, HFlimit="upper")
         self.mqdt_models.append({'L': 3, 'F': 9 / 2, 'model': QDT_F92})
 
         # Guess for G F=7/2
@@ -520,10 +520,10 @@ class Ytterbium171(AlkalineAtom):
 
         # this includes 1,3F3 MQDT of 174Yb from Lehec'c thesis and a 3F2 QDT model guess from the P F=3/2 residuals
         MQDT_G72 = mqdt_class(channels=mqdt_g72['channels'],
-                              eig_defects=[[self.p.value('1g4_rr_0', 0.02627822),self.p.value('1g4_rr_1', -0.13288481)],
-                                           [self.p.value('3g4_rr_0', 0.02547095),self.p.value('3g4_rr_1', -0.11668088)],[self.p.value('3g3_rr_0', 0.02611627),self.p.value('3g3_rr_1', -0.13079392)], ],
+                              eig_defects=[[self.p.value('1g4_rr_0', 0.02628545),self.p.value('1g4_rr_1', -0.13182564)],
+                                           [self.p.value('3g4_rr_0', 0.02548145),self.p.value('3g4_rr_1', -0.12028462)],[self.p.value('3g3_rr_0', 0.02613255),self.p.value('3g3_rr_1', -0.14203905)], ],
                               rot_order=[[1, 2]],
-                              rot_angles=[[self.p.value('13g4_th12', -0.08222676)],],
+                              rot_angles=[[self.p.value('13g4_th12', -0.089123698)],],
                               Uiabar=UiaFbar_G72, nulims=[[2], [0, 1]], atom=self)
 
         self.mqdt_models.append({'L': 4, 'F': 7 / 2, 'model': MQDT_G72})
@@ -560,10 +560,10 @@ class Ytterbium171(AlkalineAtom):
 
         # this includes 1,3F3 MQDT of 174Yb from Lehec'c thesis and a 3F2 QDT model guess from the P F=3/2 residuals
         MQDT_G92 = mqdt_class(channels=mqdt_g92['channels'],
-                              eig_defects=[[self.p.value('1g4_rr_0', 0.02627822),self.p.value('1g4_rr_1', -0.13288481)],
-                                           [self.p.value('3g4_rr_0', 0.02547095),self.p.value('3g4_rr_1', -0.11668088)], [self.p.value('3g5_rr_0', 0.02536987),self.p.value('3g5_rr_1', -0.2007948)], ],
+                              eig_defects=[[self.p.value('1g4_rr_0', 0.02628545),self.p.value('1g4_rr_1', -0.13182564)],
+                                           [self.p.value('3g4_rr_0', 0.02548145),self.p.value('3g4_rr_1', -0.12028462)], [self.p.value('3g5_rr_0', 0.02536571),self.p.value('3g5_rr_1', -0.18507079)], ],
                               rot_order=[[1, 2]],
-                              rot_angles=[[self.p.value('13g4_th12', -0.08222676)], ],
+                              rot_angles=[[self.p.value('13g4_th12', -0.089123698)], ],
                               Uiabar=UiaFbar_G92, nulims=[[2], [0, 1]], atom=self)
 
         self.mqdt_models.append({'L': 4, 'F': 9 / 2, 'model': MQDT_G92})
@@ -573,14 +573,14 @@ class Ytterbium171(AlkalineAtom):
 
         # Guess for G F=5/2 QDT model. Which is purely Fc=1
         QDT_G52 = mqdt_class_rydberg_ritz(channels=mqdt_g72['channels'][1],
-                                          deltas=[self.p.value('3g3_rr_0', 0.02611627),self.p.value('3g3_rr_1', -0.13079392)], atom=self, HFlimit="upper")
+                                          deltas=[self.p.value('3g3_rr_0', 0.02613255),self.p.value('3g3_rr_1', -0.14203905)], atom=self, HFlimit="upper")
         self.mqdt_models.append({'L': 4, 'F': 5 / 2, 'model': QDT_G52})
 
         self.p.set_prefix('171YbG112')
 
         # Guess for G F=11/2 QDT model. Which is purely Fc=1
         QDT_G112 = mqdt_class_rydberg_ritz(channels=mqdt_g72['channels'][0],
-                                          deltas=[self.p.value('3g5_rr_0', 0.02536987),self.p.value('3g5_rr_1', -0.2007948)], atom=self, HFlimit="upper")
+                                          deltas=[self.p.value('3g5_rr_0', 0.02536571),self.p.value('3g5_rr_1', -0.18507079)], atom=self, HFlimit="upper")
         self.mqdt_models.append({'L': 4, 'F': 11 / 2, 'model': QDT_G112})
 
         # Guess for H F=9/2 NOTE only the 1H5 series has been observed in 174Yb
